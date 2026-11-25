@@ -2,6 +2,11 @@
 
 Proposition pour le défi KERNEL « Redessine le portail captif d'Epitech ».
 
+**Voir le site en ligne : https://sotinkon.github.io/portail-captif/**
+([connexion](https://sotinkon.github.io/portail-captif/) ·
+[connecté](https://sotinkon.github.io/portail-captif/connecte.html) ·
+[erreur](https://sotinkon.github.io/portail-captif/erreur.html))
+
 Site statique en **HTML + CSS uniquement (zéro JavaScript)**. Un portail captif n'a pas
 encore accès à Internet : aucune ressource externe, polices système, tout le visuel est
 dessiné en CSS et en SVG inline.
