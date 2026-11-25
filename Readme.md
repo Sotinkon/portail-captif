@@ -43,3 +43,13 @@ désactive les animations.
 python3 -m http.server 8000
 # puis ouvrir http://localhost:8000
 ```
+
+## Mettre à jour le zip et GitHub
+
+Après une modification, refaire le zip du rendu puis envoyer les changements :
+
+```sh
+cd ~/portail
+zip -q portail-captif.zip index.html connecte.html erreur.html style.css
+git add -A && git commit -m "ton message" && git push
+```
