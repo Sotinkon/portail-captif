@@ -1,0 +1,385 @@
+/* =========================================================
+   Portail captif Epitech — « Réseau neuronal »
+   HTML + CSS uniquement. Zéro JavaScript. Aucune ressource externe
+   (un portail captif n'a pas encore Internet → polices système, SVG inline).
+
+   Chronologie :
+   0 → 2,4 s   écran de chargement
+   2,4 s →     la nuit s'allume : E-P-I-T-E-C-H tombe lettre par lettre,
+               puis « Autonomie · Liberté · Créativité » mot après mot,
+               le formulaire arrive au centre, la silhouette monte.
+   ensuite     les données tombent en continu dans l'égaliseur de points,
+               les neurones de la silhouette s'allument et s'échangent des signaux.
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+
+:root {
+  color-scheme: dark;
+  --start: 2.4s;
+  --navy: #09131f;
+  --ink: #0a0f15;
+  --cyan: #46dcec;
+  --cyan-soft: #8ff1fa;
+  --text: #f2f8fb;
+  --muted: #a9bdcb;
+  --cream: #f3ead6;
+  --error: #ff6b6b;
+  --blue: #2f6bff;       /* clin d'œil au bleu Epitech */
+  --mono: ui-monospace, "JetBrains Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+}
+
+body {
+  min-height: 100vh; min-height: 100dvh;
+  color: var(--text);
+  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 18%, rgba(47,107,255,.22), transparent 70%),
+    radial-gradient(ellipse 40% 45% at 62% 70%, rgba(70,220,236,.16), transparent 70%),
+    linear-gradient(180deg,
+      #040915 0%, #071433 26%, #0b2552 44%, #0d4a70 58%, #12809a 70%,
+      #2fc3d6 80%, #46dcec 86%, #a8f3fa 94%, #e8fdff 100%);
+  background-color: #040915;
+  overflow-x: hidden;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------- Scène ---------- */
+.scene {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: clamp(16px, 3vw, 32px) 16px 0;
+}
+
+/* ---------- Barre du haut ---------- */
+.nav {
+  width: 100%; max-width: 1200px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  animation: settle .9s cubic-bezier(.2,.8,.2,1) var(--start) both;
+}
+.brandmark { margin: 0; font: 800 1.05rem/1 system-ui, "Segoe UI", sans-serif; letter-spacing: .06em; }
+.brandmark b { color: var(--cyan); font-weight: 800; }
+.brandmark small { margin-left: 10px; padding-left: 10px; border-left: 1px solid rgba(169,189,203,.3); font-weight: 500; letter-spacing: 0; color: var(--muted); }
+.nav-status {
+  display: flex; align-items: center; gap: 8px; margin: 0;
+  font-size: .85rem; color: var(--muted);
+}
+.nav-status::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan); box-shadow: 0 0 0 0 rgba(70,220,236,.6);
+  animation: ping 2s ease-out infinite;
+}
+@keyframes ping { 70%, 100% { box-shadow: 0 0 0 10px rgba(70,220,236,0); } }
+
+/* ---------- Titre : lettres puis mots qui tombent ---------- */
+.hero { position: relative; z-index: 3; text-align: center; margin-top: clamp(24px, 6vh, 64px); }
+.word {
+  margin: 0; line-height: 1; white-space: nowrap;
+  font: 800 clamp(2.8rem, 8.5vw, 6.2rem)/1 system-ui, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: .06em;
+  text-shadow: 0 0 40px rgba(47,107,255,.45), 0 0 80px rgba(70,220,236,.2);
+}
+.word span {
+  display: inline-block;
+}
+/* le nom est déjà en place derrière le rideau ; à l'ouverture il reçoit un éclat de lumière */
+.word { animation: flash 1.6s ease-out calc(var(--start) + 1.25s) both; }
+@keyframes flash {
+  0%   { text-shadow: 0 0 40px rgba(47,107,255,.45), 0 0 80px rgba(70,220,236,.2); filter: brightness(.6); }
+  12%  { text-shadow: 0 0 30px #fff, 0 0 90px rgba(70,220,236,.9), 0 0 160px rgba(47,107,255,.8); filter: brightness(1.6); }
+  100% { text-shadow: 0 0 40px rgba(47,107,255,.45), 0 0 80px rgba(70,220,236,.2); filter: none; }
+}
+/* les accolades se referment autour du nom, le point s'allume */
+.word .brace { color: var(--cyan); font-weight: 300; animation: brace .9s cubic-bezier(.2,.9,.2,1) calc(var(--start) + 1.9s) both; }
+.word .brace--l { --from: -40px; }
+.word .brace--r { --from: 40px; }
+.word .dot { color: var(--cyan); animation: pop .5s cubic-bezier(.3,1.6,.5,1) calc(var(--start) + 2.3s) both; }
+@keyframes brace { from { opacity: 0; transform: translateX(var(--from)); } }
+/* ---------- Rideau de cinéma devant EPITECH ----------
+   1. roulement de tambour : le rideau frémit, un projecteur balaie le velours
+   2. ouverture : les deux pans s'écartent en se plissant vers les côtés
+   3. éclat de lumière sur le nom, puis les accolades se referment */
+.stage { position: relative; display: inline-block; padding: 6px 18px; }
+.curtain {
+  position: absolute; inset: -14px -24px; overflow: hidden; pointer-events: none;
+  animation: gone 0s linear calc(var(--start) + 2.4s) forwards;
+}
+.curtain i {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  background:
+    linear-gradient(rgba(255,255,255,.08), transparent 30%, rgba(0,0,0,.45)),
+    repeating-linear-gradient(90deg, #0a1a3a 0 10px, #17377a 16px, #0a1a3a 26px);
+  box-shadow: inset 0 -4px 0 var(--cyan);
+}
+.curtain .c-l { left: 0;  transform-origin: left center;  border-right: 2px solid var(--cyan);
+  animation: tremble .09s linear var(--start) 13 alternate, openL 1.1s cubic-bezier(.6,0,.2,1) calc(var(--start) + 1.2s) forwards; }
+.curtain .c-r { right: 0; transform-origin: right center; border-left: 2px solid var(--cyan);
+  animation: tremble .09s linear var(--start) 13 alternate-reverse, openR 1.1s cubic-bezier(.6,0,.2,1) calc(var(--start) + 1.2s) forwards; }
+.curtain::after { /* projecteur qui cherche pendant le roulement */
+  content: ""; position: absolute; top: -20%; bottom: -20%; width: 34%; z-index: 1;
+  background: radial-gradient(closest-side, rgba(255,255,255,.22), transparent);
+  animation: spot 1.2s ease-in-out var(--start) both;
+}
+@keyframes tremble { to { transform: translateX(1.5px); } }
+@keyframes openL { 0% { transform: none; } 100% { transform: translateX(-35%) scaleX(.06); opacity: .6; } }
+@keyframes openR { 0% { transform: none; } 100% { transform: translateX(35%) scaleX(.06); opacity: .6; } }
+@keyframes spot { 0% { left: -30%; } 45% { left: 60%; } 75% { left: 15%; } 100% { left: 33%; opacity: 0; } }
+@keyframes gone { to { visibility: hidden; } }
+
+.motto {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: .2em .9em;
+  margin: 18px 0 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "DejaVu Serif", serif;
+  font-weight: 300; font-size: clamp(1.1rem, 2.4vw, 1.6rem); color: var(--cyan-soft);
+}
+.motto span {
+  display: inline-block;
+  animation: drop .8s cubic-bezier(.2,.9,.25,1.15) calc(var(--start) + 2.4s + var(--i) * 380ms) both;
+}
+.motto span + span::before { content: "·"; margin-right: .9em; color: var(--muted); }
+@keyframes drop {
+  0%   { opacity: 0; transform: translateY(-60px); filter: blur(8px); }
+  70%  { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+/* ---------- Carte centrale ---------- */
+.card {
+  position: relative; z-index: 3;
+  width: min(400px, 100%); margin: clamp(20px, 4vh, 40px) 0 0;
+  padding: clamp(20px, 3vw, 28px);
+  background: rgba(9, 19, 31, .58);
+  border: 1px solid rgba(70, 220, 236, .32);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  animation: rise .9s cubic-bezier(.2,.8,.2,1) calc(var(--start) + 1.6s) both;
+}
+.card::before { /* fin liseré lumineux qui fait le tour */
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: conic-gradient(from var(--a, 0deg), transparent 0 70%, var(--cyan) 85%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: orbit 6s linear infinite;
+}
+@property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes orbit { to { --a: 360deg; } }
+
+.card h2 { margin: 0 0 4px; font-size: 1.3rem; font-weight: 650; }
+.card .lead { margin: 0 0 20px; color: var(--muted); font-size: .92rem; line-height: 1.45; }
+
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: .82rem; font-weight: 600; color: var(--muted); }
+.field input {
+  width: 100%; padding: 12px 14px;
+  font: inherit; font-size: 1rem; color: var(--text);
+  background: rgba(4, 10, 17, .7);
+  border: 1px solid rgba(169, 189, 203, .25); border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field input::placeholder { color: #6f8594; }
+.field input:focus-visible {
+  outline: none; border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(70,220,236,.2), 0 0 24px rgba(70,220,236,.25);
+}
+.field input:user-invalid, .field input[aria-invalid="true"] { border-color: var(--error); }
+
+.btn {
+  position: relative; overflow: hidden;
+  display: block; width: 100%; margin-top: 8px; padding: 13px 18px;
+  font-family: inherit; font-size: 1rem; font-weight: 650; line-height: 1; text-align: center; text-decoration: none;
+  color: var(--ink); background: var(--cream);
+  border: 0; border-radius: 10px; cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+}
+.btn:hover { box-shadow: 0 0 30px rgba(243,234,214,.35); }
+.btn:active { transform: scale(.98); }
+.btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+.btn::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.7) 50%, transparent 70%);
+  transform: translateX(-120%); transition: transform .6s ease;
+}
+.btn:hover::after { transform: translateX(120%); }
+
+.legal { margin: 14px 0 0; font-size: .76rem; line-height: 1.45; color: #7f95a4; text-align: center; }
+
+.alert {
+  margin: 0 0 18px; padding: 12px 14px;
+  border: 1px solid var(--error); border-radius: 10px;
+  background: rgba(255,107,107,.12); color: #ffd6d6;
+  font-size: .9rem; line-height: 1.4;
+  animation: shake .5s ease calc(var(--start) + 2.4s) both;
+}
+.alert strong { display: block; margin-bottom: 2px; color: #fff; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+.ok-badge {
+  display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 14px;
+  border-radius: 50%; color: var(--ink); background: var(--cyan);
+  font: 800 1.5rem/1 system-ui, sans-serif;
+  box-shadow: 0 0 0 0 rgba(70,220,236,.5);
+  animation: pop .6s cubic-bezier(.3,1.6,.5,1) calc(var(--start) + 2.2s) both, ping 2.2s ease-out calc(var(--start) + 3s) infinite;
+}
+@keyframes pop { from { transform: scale(0); } }
+.card--ok { text-align: center; }
+.facts { margin: 0 0 18px; display: grid; grid-template-columns: auto auto; justify-content: center; gap: 6px 16px; font-size: .9rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-weight: 600; }
+
+/* ---------- Silhouette : réseau neuronal ---------- */
+.mind {
+  position: absolute; z-index: 1; bottom: 4vh; left: calc(50% + 10px);
+  width: min(760px, 54vw); height: auto; overflow: visible;
+  filter: drop-shadow(0 0 40px rgba(70,220,236,.22)) drop-shadow(0 0 90px rgba(47,107,255,.2));
+  /* se fond dans le décor : le bas disparaît dans le flux de données */
+  -webkit-mask: linear-gradient(#000 55%, rgba(0,0,0,.35) 82%, transparent);
+          mask: linear-gradient(#000 55%, rgba(0,0,0,.35) 82%, transparent);
+  animation: lift 1.4s cubic-bezier(.2,.8,.2,1) calc(var(--start) + .2s) both;
+}
+@keyframes lift { from { opacity: 0; transform: translateY(24px) scale(.97); } }
+.mind .float { animation: hover 7s ease-in-out infinite; }
+@keyframes hover { 50% { transform: translateY(-8px); } }
+.mind .lobe   { stroke: none; opacity: .82; }
+.mind .rim    { display: none; }
+.mind .sulcus { fill: none; stroke: #040a16; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+.mind .ridge  { fill: none; stroke: rgba(143,241,250,.34); stroke-width: 1; stroke-linecap: round; transform: translate(-1.6px, -1.6px); }
+.mind .folia  { fill: none; stroke: #040a16; stroke-width: 2.2; opacity: .8; }
+.mind .brain-glow { animation: think 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes think { 50% { opacity: .5; transform: scale(.95); } }
+.mind .edge   { stroke: rgba(143,241,250,.24); stroke-width: .9; }
+.mind .spine  { stroke: rgba(143,241,250,.5); stroke-width: 2; fill: none; }
+.mind .pulse  {
+  stroke: #e6fdff; stroke-width: 2; stroke-linecap: round; fill: none;
+  stroke-dasharray: .08 .92; stroke-dashoffset: 1;
+  animation: signal var(--s) linear var(--t) infinite;
+}
+.mind .spine-pulse { stroke-width: 3; stroke-dasharray: .1 .9; }
+@keyframes signal { to { stroke-dashoffset: 0; } }
+.mind .node   { fill: var(--cyan-soft); animation: twinkle var(--s) ease-in-out var(--t) infinite; }
+.mind .hub    { fill: #fff; filter: drop-shadow(0 0 5px var(--cyan)); }
+@keyframes twinkle { 50% { opacity: .2; } }
+
+/* Synapses : là où les neurones se connectent, une filière Epitech s'allume, une à la fois */
+.mind .tag { opacity: 0; transform-box: fill-box; transform-origin: center bottom;
+  animation: tagOn var(--cy) cubic-bezier(.2,.8,.2,1) calc(var(--start) + 1.8s + var(--k) * var(--step)) infinite; }
+.mind .tag rect { fill: rgba(6,11,18,.82); stroke: var(--cyan); stroke-width: .8; }
+.mind .tag text { fill: #e6fdff; font: 600 10px/1 system-ui, "Segoe UI", sans-serif; letter-spacing: .02em; }
+.mind .tag line { stroke: var(--cyan); stroke-width: .8; stroke-dasharray: 2 2; }
+.mind .ring { fill: none; stroke: #fff; stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center;
+  animation: ring var(--cy) ease-out calc(var(--start) + 1.8s + var(--k) * var(--step)) infinite; }
+.mind .tags { --cy: 22s; --step: 2.2s; }
+@keyframes tagOn {
+  0%        { opacity: 0; transform: translateY(6px) scale(.7); }
+  2%, 8.5%  { opacity: 1; transform: none; }
+  10%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes ring {
+  0%       { opacity: 1; transform: scale(.4); }
+  6%, 100% { opacity: 0; transform: scale(3.2); }
+}
+
+/* ---------- Pluie de code (fonctions, commandes, données) ---------- */
+.stream {
+  position: absolute; z-index: 0; inset: 0 0 18% 0; overflow: hidden; pointer-events: none;
+  -webkit-mask: linear-gradient(transparent 0, #000 18%, #000 70%, transparent);
+          mask: linear-gradient(transparent 0, #000 18%, #000 70%, transparent);
+  animation: fadeIn 1.2s ease calc(var(--start) + .3s) both;
+}
+.tok {
+  position: absolute; top: 0; left: var(--x);
+  font: 500 var(--z) / 1 var(--mono); white-space: nowrap;
+  color: rgba(143,241,250, var(--o));
+  text-shadow: 0 0 8px rgba(70,220,236,.35);
+  animation: tokFall var(--s) linear var(--t) infinite;
+}
+.tok b { color: #fff; font-weight: 600; }
+@keyframes tokFall {
+  0%   { transform: translateY(-5vh); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(85vh); opacity: 0; }
+}
+
+/* ---------- Flux de données (remplace l'égaliseur) ----------
+   Des bandes de vraies données défilent à l'horizon : hexdump, logs réseau,
+   JSON, paquets, requêtes. Plus on descend, plus la bande est grande et lente
+   (effet de profondeur), et elle se fond dans le halo. */
+.data {
+  position: absolute; z-index: 0; left: 0; right: 0; bottom: 0; height: 42%;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
+  padding-bottom: 6px; overflow: hidden; pointer-events: none;
+  -webkit-mask: linear-gradient(transparent 0, #000 22%);
+          mask: linear-gradient(transparent 0, #000 22%);
+  animation: fadeIn 1.2s ease calc(var(--start) + .1s) both;
+}
+.lane { display: flex; width: max-content; white-space: nowrap; }
+.lane span {
+  padding-right: 3em;
+  font: 500 var(--z) / 1.25 var(--mono); letter-spacing: .04em;
+  color: var(--c); text-shadow: 0 0 10px rgba(70,220,236,.35);
+}
+.lane span b { color: var(--hi, #fff); font-weight: 700; }
+/* deux copies du texte → boucle sans couture */
+.lane { animation: flow var(--s) linear var(--t) infinite; }
+.lane.rev { animation-direction: reverse; }
+@keyframes flow { to { transform: translateX(-50%); } }
+
+/* ---------- Écran de chargement ---------- */
+.loader {
+  position: fixed; inset: 0; z-index: 50; pointer-events: none;
+  display: grid; place-items: center; background: var(--navy);
+  animation: loaderOut .7s ease calc(var(--start) - .5s) forwards;
+}
+.ld { text-align: center; }
+.ld-eq { display: flex; justify-content: center; align-items: flex-end; gap: 4px; height: 54px; margin-bottom: 22px; }
+.ld-eq i {
+  width: 5px; height: 100%;
+  background: repeating-linear-gradient(to top, var(--cyan) 0 5px, transparent 5px 9px);
+  animation: ldBar .9s steps(4) infinite alternate;
+  animation-delay: calc(var(--i) * -.13s);
+}
+@keyframes ldBar { from { transform: scaleY(.2); } }
+.ld-eq i { transform-origin: bottom; }
+.ld-title { margin: 0; font: 800 1.6rem/1 system-ui, sans-serif; letter-spacing: .12em; color: var(--text); }
+.ld-title b { color: var(--cyan); }
+.ld-text { margin: 12px 0 0; font: 500 .72rem/1 ui-monospace, "DejaVu Sans Mono", monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.ld-bar { width: 200px; height: 2px; margin: 18px auto 0; background: rgba(169,189,203,.2); overflow: hidden; }
+.ld-bar::after {
+  content: ""; display: block; height: 100%; background: var(--cyan);
+  transform-origin: left; animation: load calc(var(--start) - .6s) cubic-bezier(.5,0,.3,1) both;
+}
+@keyframes load { from { transform: scaleX(0); } }
+@keyframes loaderOut { to { opacity: 0; visibility: hidden; } }
+
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes settle { from { opacity: 0; transform: translateY(-10px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.98); } }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  .data { height: 34%; }
+  .mind { left: auto; right: -14%; bottom: 3vh; width: 82vw; opacity: .85; }
+  .tok:nth-child(2n) { display: none; }
+  .stream { opacity: .3; }   /* sur mobile le code passe derrière le titre : on l'estompe */
+  .data { height: 42%; }
+  .word { letter-spacing: .02em; }
+  .nav-status span { display: none; }
+}
+@media (max-height: 760px) and (min-width: 761px) {
+  .hero { margin-top: 12px; }
+  .word { font-size: clamp(2.4rem, 6.5vw, 4.4rem); }
+  .card { margin-top: 18px; }
+}
+
+/* ---------- Accessibilité : pas d'animation si demandé ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .loader, .curtain { display: none; }
+  *, *::before, *::after { animation: none !important; }
+}
